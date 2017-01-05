@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style>
+		body{width:1136px;margin:50px auto;background:#ccc;}
+		h1{font-size:24px;font-family:"microsoft yahei";}
+		div,pre{padding:20px;border-radius:10px;background:#282828;color:#999;font-size:16px;margin-bottom:100px;}
+		pre{  line-height: 2;}
+		a{color:#fff;}
+	</style>
+</head>
+<body>
+	<h1>ajax</h1>
+	<div>
+		<p>xmlhttprequest对象作为用户操作和服务器响应的中间引擎。通过这个对象可以向服务器发送请求，然后接受服务器响应后返回
+的数据来通过js代码操作dom对象，从而实现页面的数据更新。</p>
+		<p>ie6以下用activeXobject(microsoft.XMLDOM)</p>
+		<p>1.创建对象
+2、连接服务器
+3.发送请求
+4.接收返回</p>
+	</div>
+	<pre>
+function ajax(url, fnSucc, fnFaild){
+    //1.创建对象
+    var oAjax = null;
+    if(window.XMLHttpRequest){
+        oAjax = new XMLHttpRequest();
+    }else{
+        oAjax = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+      
+    //2.连接服务器  
+    oAjax.open('GET', url, true);   //open(方法, url, 是否异步)
+      
+    //3.发送请求  
+    oAjax.send();
+      
+    //4.接收返回
+    oAjax.onreadystatechange = function(){  //OnReadyStateChange事件
+        if(oAjax.readyState == 4){  //4为完成
+            if(oAjax.status == 200){    //200为成功
+                fnSucc(oAjax.responseText) 
+            }else{
+                if(fnFaild){
+                    fnFaild();
+                }
+            }
+        }
+    };
+}
+
+	</pre>
+	<h1>jsonp</h1>
+	<div>jsonp是实现跨域，其利用的是script标签可以实现跨域的原理，就是客户端注册个回调方法，把方法名传给服务器，服务器生
+成json数据，然后以js语法的方式，生成function，function名就是传上来的参数jsonp，最后将json数据直接以参数传入方法中，生成出js语法文档，返回给客户端去解析执行。
+		<a href="http://justcoding.iteye.com/blog/1366102" target="_blank;">http://justcoding.iteye.com/blog/1366102</a>
+	</div>
+	<h1>http请求原理：</h1>
+	<div>
+		
+<p>1、连接：当输入一个请求时，首先建立一个socket连接，因为socket是通过ip和端口建立的，所以，之前则还有一个DNS解析过
+
+程。如把www.baidu.com变成一个ip，如果url不包含端口号，则会使用该协议的默认端口号，HTTP协议的默认端口号为80。</p>
+
+<p>2、请求：连接成功后，开始向web服务器发送请求，这个请求一般是GET或POST请求。</p>
+
+<p>3、应答：web服务器收到这个请求，进行处理。web服务器会把文件内容传送给响应的web浏览器。 包括：HTTP头信息，体信息
+
+。</p>
+
+<p>4、关闭连接：当应答结束后，web浏览器与web服务器必须断开，以保证其它web浏览器能够与web服务器建立连接。</p>
+	</div>
+	<h1>cookie和session</h1>
+	<div>
+		<p>cookie存在客户端，每个cookie长度不能超过4k，否则会截掉，会有时间限制，过期后，会再从服务器上去再次获取新的cookie
+
+数据</p>
+<p>session存在服务器端</p>
+
+<p>禁掉cookie，session可以用吗？</p>
+<p>使用服务器端 Session 的网站，因为 Session ID 也是大多保存在 cookie 里面的</p>
+
+<p>常见的session实现方式是基于cookie的， 所以禁用cookie，session随之失效</p>
+<p>因此，cookie只是最优雅的实现session的方式，因为cookie对用户来说不可见，同时会自动在HTTP报文中传输</p>
+<p>但session也可以通过其他方式来保持， 比如放一个sessionId在URL的参数里 </p>
+	</div>
+	<h1>http状态码</h1>
+	<div>
+		<p>200 成功</p>
+		<p>301 请求页面已永久移动到新位置</p>
+		<p>302 请求页面临时移动到新位置</p>
+		<p>303 参见其他</p>
+		<p>304 如果网页自请求者上次请求后没有更新，则用304代码告诉搜索引擎机器人，可节省带宽和开销</p>
+		<p>400 服务器不理解请求的语法</p>
+		<p>403 禁止用户访问</p>
+		<p>404 找不到页面</p>
+		<p>500 服务器错误，可能是服务器端的源码发生错误</p>
+	</div>
+	<h1></h1>
+	<div>
+<p>网页的缓存是由HTTP消息头中的“Cache-control”来控制的，常见的取值有private、no-cache、max-age、must-revalidate等
+
+，默认为private。</p>
+<p>max-age=[秒] — 执行缓存被认为是最新的最长时间。类似于过期时间，这个参数是基于请求时间的相对时间间隔，而不是绝对
+
+过期时间，[秒]是一个数字，单位是秒：从请求时间 开始到过期时间之间的秒数。</p>
+<p>代表只接受 Age 值小于 max-age 值，并且没有过期的对象</p>
+	</div>
+	<h1>web安全问题。csrf和xss怎么解决。</h1>
+	<div>
+		<p>XSS：跨站脚本（Cross-site scripting）</p>
+
+		<p>//过滤用户的输入，开启默认转义功能，避免</p>
+		<p>我个人建议在使用模版引擎的 Web 项目中，开启（或不要关闭）类似 Django Template、Jinja2 中“默认转义”（Auto 
+
+		Escape）的功能。
+
+		<p>CSRF：跨站请求伪造（Cross-site request forgery）</p>
+
+		<p>令牌</p>
+		<p>验证码</p>
+		<p>确定是否是人为操作</p>
+	</div>
+	<h1>js异步加载</h1>
+	<pre>
+defer(只支持IE)
+&lt;script type="text/javascript" defer="defer"&gt; 
+alert(document.getElementById("p1").firstChild.nodeValue); 
+&lt;/script&gt;
+ 
+async(html5属性)
+&lt;script type="text/javascript" src="demo_async.js" async="async"&gt;&lt;/script&gt; 
+	</pre>
+	<h1>http头标</h1>
+	<pre>
+Accept：定义客户端可以处理的媒体类型，按优先级排序；
+        定义客户端可以处理的媒体类型，按优先级排序；
+Age:允许服务器规定自服务器生成该响应以来所经过的时间长度，以秒为单位。
+	该头标主要用于缓存响应。例如：Age: 30
+Allow: 一个响应头标，它定义一个由位于请求URI中的次源所支持的HTTP方法列表。例如：Allow: GET,PUT
+Authorization: 一个响应头标，用于定义访问一种资源所必需的授权（域和被编码的用户ID与口令）。
+            例如：Authorization: Basic YXV0aG9yOnBoaWw=
+Cache-Control: 一个用于定义缓存指令的通用头标。例如：Cache-Control: max-age=30
+Connection:一个用于表明是否保存socket连接为开放的通用头标。例如：Connection: close或Connection: keep-alive
+Content-Base:一种定义基本URI的实体头标，为了在实体范围内解析相对URLs。
+            如果没有定义Content-Base头标解析相对URLs，使用Content-Location URI（存在且绝对）或使用URI请求。
+            例如：Content-Base: Http://www.myweb.com
+Content-Encoding:    一种介质类型修饰符，标明一个实体是如何编码的。例如：Content-Encoding: zip
+Content-Language:    用于指定在输入流中数据的自然语言类型。例如：Content-Language: en 
+	</pre>
+	<h1>闭包</h1>
+	<pre>
+闭包可以用在许多地方。它的最大用处有两个，一个是前面提到的可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中。
+　function f1(){
+　　　　var n=999;
+　　　　nAdd=function(){n+=1}
+　　　　function f2(){
+　　　　　　alert(n);
+　　　　}
+　　　　return f2;
+　　}
+　　var result=f1();
+　　result(); // 999
+　　nAdd();
+　　result(); // 1000
+在这段代码中，result实际上就是闭包f2函数。它一共运行了两次，第一次的值是999，第二次的值是1000。
+这证明了，函数f1中的局部变量n一直保存在内存中，并没有在f1调用后被自动清除。
+为什么会这样呢？
+原因就在于f1是f2的父函数，而f2被赋给了一个全局变量，这导致f2始终在内存中，而f2的存在依赖于f1，
+因此f1也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。
+这段代码中另一个值得注意的地方，就是"nAdd=function(){n+=1}"这一行，首先在nAdd前面没有使用var关键字
+，因此nAdd是一个全局变量，而不是局部变量。其次，nAdd的值是一个匿名函数（anonymous function），
+而这个匿名函数本身也是一个闭包，所以nAdd相当于是一个setter，可以在函数外部对函数内部的局部变量进行操作。
+<a href="http://www.codeceo.com/article/javascript-closure-interview.html">http://www.codeceo.com/article/javascript-closure-interview.html</a>
+	</pre>
+	<pre>
+使用闭包的注意点
+1）由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，
+在IE中可能导致内存泄露。解决方法是，在退出函数之前，将不使用的局部变量全部删除。
+2）闭包会在父函数外部，改变父函数内部变量的值。所以，如果你把父函数当作对象（object）使用，
+把闭包当作它的公用方法（Public Method），把内部变量当作它的私有属性（private value），
+这时一定要小心，不要随便改变父函数内部变量的值。
+	</pre>
+	<pre>
+代码片段一。
+　　var name = "The Window";
+　　var object = {
+　　　　name : "My Object",
+　　　　getNameFunc : function(){
+　　　　　　return function(){
+　　　　　　　　return this.name;
+　　　　　　};
+　　　　}
+　　};
+　　alert(object.getNameFunc()());
+//The Window
+
+代码片段二。
+　　var name = "The Window";
+　　var object = {
+　　　　name : "My Object",
+　　　　getNameFunc : function(){
+　　　　　　var that = this;
+　　　　　　return function(){
+　　　　　　　　return that.name;
+　　　　　　};
+　　　　}
+　　};
+　　alert(object.getNameFunc()());
+//My Object
+	</pre>
+	<h1>内存泄漏</h1>
+	<pre>
+内存泄露是指一块被分配的内存既不能使用，又不能回收，直到浏览器进程结束。
+onunload 事件在用户退出页面时发生。
+
+	</pre>
+	<h1>setTimeout</h1>
+	<pre>
+window.settimeout()方法要调用带参数的函数有两种方法： 
+1. 
+复制代码 代码如下:
+
+function init(){ 
+var url = "<%=basePath%>fetchwater.do?method=searchRealWater&xzqh=" + "<%=xzqh%>" + "&rand="+Math.random(); 
+//alert(url); 
+window.setTimeout(function(){ searchJDWater(url);},100); 
+} 
+
+2. 
+复制代码 代码如下:
+
+function init(){ 
+var url = "<%=basePath%>fetchwater.do?method=searchRealWater&xzqh=" + "<%=xzqh%>" + "&rand="+Math.random(); 
+//alert(url); 
+window.setTimeout(“searchJDWater(”+url+“)”, 100); 
+} 
+
+注意： 带参数方法使用setTimeout要注意，setTimeout("函数名("+参数+")",毫秒数)，这里的参数只能是字符串形式的，而不能传递一个对象 		
+	</pre>
+	<h1>前端性能优化</h1>
+	<pre>
+减少http请求数
+1.简化页面
+2、合理设置http缓存（很少变化的资源）
+3、资源合并和压缩
+4、css sprites
+5、懒加载
+6、CSS3图标、Icon Font
+
+将外部脚本置底（将脚本内容在页面信息内容加载后再加载）
+
+将 CSS放在 HEAD中
+如果将 CSS放在其他地方比如 BODY中，则浏览器有可能还未下载和解析到 CSS就已经开始渲染页面了，
+这就导致页面由无 CSS状态跳转到 CSS状态，用户体验比较糟糕。
+
+减少不必要的 HTTP跳转
+　　对于以目录形式访问的HTTP链接，很多人都会忽略链接最后是否带’/'，
+假如你的服务器对此是区别对待的话，那么你也需要注意，这其中很可能隐藏了301跳转，增加了多余请求。
+具体参见下图，其中第一个链接是以无 ’/'结尾的方式访问的，于是服务器有了一次跳转。
+
+避免重复的资源请求
+　　这种情况主要是由于疏忽或页面由多个模块拼接而成，然后每个模块中请求了同样的资源时，
+会导致资源的重复请求
+
+cdn加速
+
+	</pre>
+	<h1>工程化的角度来解决一些前端优化问题</h1>
+	<pre>
+		<a href="http://www.cnblogs.com/yexiaochai/archive/2015/10/26/4901341.html">http://www.cnblogs.com/yexiaochai/archive/2015/10/26/4901341.html</a>
+	</pre>
+	<h1>HTMl5的sessionStorage和localStorage</h1>
+	<pre>
+html5中的Web Storage包括了两种存储方式：sessionStorage和localStorage。
+
+sessionStorage用于本地存储一个会话（session）中的数据，这些数据只有在同一个会话中的页面才能
+访问并且当会话结束后数据也随之销毁。因此sessionStorage不是一种持久化的本地存储，
+仅仅是会话级别的存储。
+
+而localStorage用于持久化的本地存储，除非主动删除数据，否则数据是永远不会过期的。
+
+web storage和cookie的区别
+
+Web Storage的概念和cookie相似，区别是它是为了更大容量存储设计的。Cookie的大小是受限的，
+并且每次你请求一个新的页面的时候Cookie都会被发送过去，这样无形中浪费了带宽，
+另外cookie还需要指定作用域，不可以跨域调用。
+
+除此之外，Web Storage拥有setItem,getItem,removeItem,clear等方法，
+不像cookie需要前端开发者自己封装setCookie，getCookie。
+
+但是Cookie也是不可以或缺的：Cookie的作用是与服务器进行交互，作为HTTP规范的一部分而存在 ，
+而Web Storage仅仅是为了在本地“存储”数据而生（来自@otakustay 的纠正）
+
+html5 web storage的浏览器支持情况
+
+浏览器的支持除了IE７及以下不支持外，其他标准浏览器都完全支持(ie及FF需在web服务器里运行)，
+值得一提的是IE总是办好事，例如IE7、IE6中的UserData其实就是javascript本地存储的解决方案。
+通过简单的代码封装可以统一到所有的浏览器都支持web storage。
+
+要判断浏览器是否支持localStorage可以使用下面的代码：
+
+if(window.localStorage){
+     alert("浏览支持localStorage") }else{
+         alert("浏览暂不支持localStorage")
+          } //或者 
+          if(typeof window.localStorage == 'undefined'){ 	
+          alert("浏览暂不支持localStorage") 
+      }
+localStorage和sessionStorage操作
+
+localStorage和sessionStorage都具有相同的操作方法，例如setItem、getItem和removeItem等
+
+localStorage和sessionStorage的方法
+
+setItem存储value
+
+用途：将value存储到key字段
+用法：.setItem( key, value)
+代码示例：
+
+	sessionStorage.setItem("key", "value"); 	localStorage.setItem("site", "js8.in");
+getItem获取value
+
+用途：获取指定key本地存储的值
+用法：.getItem(key)
+代码示例：
+
+	var value = sessionStorage.getItem("key"); 	var site = localStorage.getItem("site");
+removeItem删除key
+
+用途：删除指定key本地存储的值
+用法：.removeItem(key)
+代码示例：
+
+	sessionStorage.removeItem("key"); 	localStorage.removeItem("site");
+clear清除所有的key/value
+
+用途：清除所有的key/value
+用法：.clear()
+代码示例：
+
+	sessionStorage.clear(); 	localStorage.clear();
+其他操作方法：点操作和[]
+
+web Storage不但可以用自身的setItem,getItem等方便存取，也可以像普通对象一样用点(.)操作符，及[]的方式进行数据存储，像如下的代码：
+
+var storage = window.localStorage; 
+storage.key1 = "hello"; 
+storage["key2"] = "world"; 
+console.log(storage.key1); 
+console.log(storage["key2"]);
+localStorage和sessionStorage的key和length属性实现遍历
+
+sessionStorage和localStorage提供的key()和length可以方便的实现存储的数据遍历，例如下面的代码：
+
+var storage = window.localStorage;
+ for (var i=0, len = storage.length; i  <  len; i++){    
+  var key = storage.key(i);     
+  var value = storage.getItem(key);     
+  console.log(key + "=" + value); 
+}
+storage事件
+
+storage还提供了storage事件，当键值改变或者clear的时候，就可以触发storage事件，
+如下面的代码就添加了一个storage事件改变的监听：
+
+if(window.addEventListener){ 	
+window.addEventListener("storage",handle_storage,false); 
+}else if(window.attachEvent){ 	
+window.attachEvent("onstorage",handle_storage); 
+} function handle_storage(e){ 	
+if(!e){e=window.event;}	 
+}
+storage事件对象的具体属性如下表：
+
+Property	Type	Description
+key	String	The named key that was added, removed, or moddified
+oldValue	Any	The previous value(now overwritten), or null if a new item was added
+newValue	Any	The new value, or null if an item was added
+url/uri	String	The page that called the method that triggered this change
+	</pre>
+	<h1>js知识补充</h1>
+	<pre>
+arguments对象可以实现不确定参数个数的时候的用，是一个function里面的所传入的参数数组。
+arguments是js里的一个默认对象
+
+通过标签名查找 HTML 元素
+x.getElementsByTagName("p");
+通过类名找到 HTML 元素
+document.getElementsByClassName("intro");
+
+修改元素的innerHTML属性来修改元素内容
+
+style
+document.getElementById(id).style.property=new style
+document.getElementById("p2").style.color="blue";
+
+onclick
+document.getElementById("myBtn").onclick=function(){displayDate()};
+
+
+这段代码创建新的p 元素：
+var para=document.createElement("p");
+如需向 p元素添加文本，您必须首先创建文本节点。这段代码创建了一个文本节点：
+var node=document.createTextNode("这是一个新段落。");
+然后您必须向 p 元素追加这个文本节点：
+para.appendChild(node);
+最后您必须向一个已有的元素追加这个新元素。
+这段代码找到一个已有的元素：
+var element=document.getElementById("div1");
+以下代码在已存在的元素后添加新元素：
+element.appendChild(para);
+
+
+从父元素中删除子元素：
+parent.removeChild(child);
+
+
+Window Location
+window.location 对象在编写时可不使用 window 这个前缀。 一些例子：
+一些实例:
+location.hostname 返回 web 主机的域名
+location.pathname 返回当前页面的路径和文件名
+location.port 返回 web 主机的端口 （80 或 443）
+location.protocol 返回所使用的 web 协议（http:// 或 https://）
+
+
+Window History
+window.history对象在编写时可不使用 window 这个前缀。
+为了保护用户隐私，对 JavaScript 访问该对象的方法做出了限制。
+一些方法：
+history.back() - 与在浏览器点击后退按钮相同
+history.forward() - 与在浏览器中点击按钮向前相同
+
+
+concat
+
+定义和用法
+concat() 方法用于连接两个或多个数组。
+该方法不会改变现有的数组，而仅仅会返回被连接数组的一个副本。
+语法
+arrayObject.concat(arrayX,arrayX,......,arrayX)
+参数	描述
+arrayX	必需。该参数可以是具体的值，也可以是数组对象。可以是任意多个。
+返回值
+返回一个新的数组。该数组是通过把所有 arrayX 参数添加到 arrayObject 中生成的。如果要进行 concat() 操作的参数是数组，那么添加的是数组中的元素，而不是数组。
+
+
+slice() 方法可从已有的数组中返回选定的元素。
+语法
+arrayObject.slice(start,end)
+参数	描述
+start	必需。规定从何处开始选取。如果是负数，那么它规定从数组尾部开始算起的位置。
+也就是说，-1 指最后一个元素，-2 指倒数第二个元素，以此类推。
+end	可选。规定从何处结束选取。该参数是数组片断结束处的数组下标。如果没有指定该参数，
+那么切分的数组包含从 start 到数组结束的所有元素。如果这个参数是负数，那么它规定的是从数组尾部开始算起的元素。
+返回值
+返回一个新的数组，包含从 start 到 end （不包括该元素）的 arrayObject 中的元素。
+说明
+请注意，该方法并不会修改数组，而是返回一个子数组。如果想删除数组中的一段元素，应该使用方法 Array.splice()。
+
+在本例中，我们将创建一个新数组，然后显示从其中选取的元素：
+&lt;script type="text/javascript"&gt;
+
+var arr = new Array(6)
+arr[0] = "George"
+arr[1] = "John"
+arr[2] = "Thomas"
+arr[3] = "James"
+arr[4] = "Adrew"
+arr[5] = "Martin"
+
+document.write(arr + "<br />")
+document.write(arr.slice(2,4) + "<br />")
+document.write(arr)
+
+&lt;/script&gt;
+输出：
+George,John,Thomas,James,Adrew,Martin
+Thomas,James
+George,John,Thomas,James,Adrew,Martin
+
+
+splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目。
+注释：该方法会改变原始数组。
+语法
+arrayObject.splice(index,howmany,item1,.....,itemX)
+参数	描述
+index	必需。整数，规定添加/删除项目的位置，使用负数可从数组结尾处规定位置。
+howmany	必需。要删除的项目数量。如果设置为 0，则不会删除项目。
+item1, ..., itemX	可选。向数组添加的新项目。
+返回值
+类型	描述
+Array	包含被删除项目的新数组，如果有的话。
+说明
+splice() 方法可删除从 index 处开始的零个或多个元素，并且用参数列表中声明的一个或多个值来替换那些被删除的元素。
+如果从 arrayObject 中删除了元素，则返回的是含有被删除的元素的数组。
+
+
+decodeURIComponent() 函数可对 encodeURIComponent() 函数编码的 URI 进行解码。
+在本例中，我们将使用 decodeURIComponent() 对编码后的 URI 进行解码：
+&lt;script type="text/javascript"&gt;
+
+var test1="http://www.w3school.com.cn/My first/"
+
+document.write(encodeURIComponent(test1)+ "<br />")
+document.write(decodeURIComponent(test1))
+
+&lt;/script&gt;
+输出：
+http%3A%2F%2Fwww.w3school.com.cn%2FMy%20first%2F
+http://www.w3school.com.cn/My first/
+
+	</pre>
+	<h1>JavaScript HTML DOM EventListener</h1>
+	<pre>
+addEventListener() 方法用于向指定元素添加事件句柄。
+addEventListener() 方法添加的事件句柄不会覆盖已存在的事件句柄。
+你可以向一个元素添加多个事件句柄。
+你可以向同个元素添加多个同类型的事件句柄，如：两个 "click" 事件。
+你可以向任何 DOM 对象添加事件监听，不仅仅是 HTML 元素。如： window 对象。
+addEventListener() 方法可以更简单的控制事件（冒泡与捕获）。
+当你使用 addEventListener() 方法时, JavaScript 从 HTML 标记中分离开来，可读性更强， 在没有控制HTML标记时也可以添加事件监听。
+你可以使用 removeEventListener() 方法来移除事件的监听。
+
+element.addEventListener(event, function, useCapture);
+第一个参数是事件的类型 (如 "click" 或 "mousedown").
+第二个参数是事件触发后调用的函数。
+第三个参数是个布尔值用于描述事件是冒泡还是捕获。该参数是可选的。
+
+事件冒泡或事件捕获？
+事件传递有两种方式：冒泡与捕获。
+事件传递定义了元素事件触发的顺序。 如果你将 元素插入到 元素中，用户点击 元素, 
+哪个元素的 "click" 事件先被触发呢？
+在 冒泡 中，内部元素的事件会先被触发，然后再触发外部元素，
+即： 元素的点击事件先触发，然后会触发 元素的点击事件。
+在 捕获 中，外部元素的事件会先被触发，然后才会触发内部元素的事件，
+即： 元素的点击事件先触发 ，然后再触发 元素的点击事件。
+addEventListener() 方法可以指定 "useCapture" 参数来设置传递类型：
+addEventListener(event, function, useCapture);
+默认值为 false, 即冒泡传递，当值为 true 时, 事件使用捕获传递。
+
+
+removeEventListener() 方法
+removeEventListener() 方法移除由 addEventListener() 方法添加的事件句柄:
+实例
+element.removeEventListener("mousemove", myFunction);
+
+
+绑定事件返回的e的常用用法
+
+属性/方法	类型	含义
+bubbles	Boolean	事件是否冒泡
+cancelable	Boolean	是否可以取消事件的默认行为
+currentTarget	Boolean	事件处理程序当前正在处理事件的那个元素
+defaultPrevented	Boolean	为true 表示已经调用了preventDefault()
+detail	Integer	与事件相关的细节信息
+eventPhase	Integer	调用事件处理程序的阶段：1表示捕获阶段，2表示“处于目标”，3表示冒泡阶段
+preventDefault()	Function	取消事件的默认行为。如果cancelable是true，则可以使用这个方法
+stopImmediatePropagation()	Function	取消事件的进一步捕获或冒泡，同时阻止任何事件处理程序被调用
+stopPropagation()	Function	取消事件的进一步捕获或冒泡。如果bubbles为true，则可以使用这个方法
+target	Element	事件的目标
+type	String	被触发的事件的类型
+view	AbstractView	与事件关联的抽象视图。等同于发生事件的window对象
+	</pre>
+	<h1>call和apply</h1>
+	<pre>
+call() 和 apply() 是预定义的函数方法。 两个方法可用于调用函数，两个方法的第一个参数必须是对象本身。
+实例
+function myFunction(a, b) {
+    return a * b;
+}
+myFunction.call(myObject, 10, 2);      // 返回 20
+
+实例
+function myFunction(a, b) {
+    return a * b;
+}
+myArray = [10,2];
+myFunction.apply(myObject, myArray);   // 返回 20
+两个方法都使用了对象本身作为第一个参数。 两者的区别在于第二个参数： 
+apply传入的是一个参数数组，也就是将多个参数组合成为一个数组传入，
+而call则作为call的参数传入（从第二个参数开始）。
+在 JavaScript 严格模式(strict mode)下, 在调用函数时第一个参数会成为 this 的值， 即使该参数不是一个对象。
+在 JavaScript 非严格模式(non-strict mode)下, 如果第一个参数的值是 null 或 undefined, 它将使用全局对象替代。
+	</pre>
+	<h1>js计时事件</h1>
+	<pre>
+clearInterval() 方法用于停止 setInterval() 方法执行的函数代码。
+clearTimeout() 方法用于停止执行setTimeout()方法的函数代码。
+	</pre>
+	<h1>JavaScript Cookies</h1>
+	<pre>
+使用 JavaScript 创建Cookie
+JavaScript 可以使用 document.cookie 属性来创建 、读取、及删除 cookies。
+JavaScript 中，创建 cookie 如下所示：
+document.cookie="username=John Doe";
+您还可以为 cookie 添加一个过期时间（以 UTC 或 GMT 时间）。默认情况下，cookie 在浏览器关闭时删除：
+document.cookie="username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 GMT";
+您可以使用 path 参数告诉浏览器 cookie 的路径。默认情况下，cookie 属于当前页面。
+document.cookie="username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
+
+使用 JavaScript 读取 Cookie
+在 JavaScript 中, 可以使用以下代码来读取 cookies：
+var x = document.cookie;
+
+使用 JavaScript 修改 Cookie
+在 JavaScript 中，修改 cookies 类似于创建 cookies，如下所示：
+document.cookie="username=John Smith; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
+旧的 cookie 将被覆盖。
+
+使用 JavaScript 删除 Cookie
+删除 cookie 非常简单。您只需要设置 expires 参数为以前的时间即可，如下所示，
+设置为 Thu, 01 Jan 1970 00:00:00 GMT:
+document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+注意，当您删除时不必指定 cookie 的值。
+
+
+Cookie 字符串
+document.cookie 属性看起来像一个普通的文本字符串，其实它不是。
+即使您在 document.cookie 中写入一个完整的 cookie 字符串, 当您重新读取该 cookie 信息时，cookie 信息是以名/值对的形式展示的。
+如果您设置了新的 cookie，旧的 cookie 不会被覆盖。 新 cookie 将添加到 document.cookie 中，
+所以如果您重新读取document.cookie
+	</pre>
+	<h1>SVG和CANVAS的区别</h1>
+	<pre>
+区别一：
+svg绘制出来的每一个图形的元素都是独立的DOM节点，能够方便的绑定事件或用来修改。canvas输出的是一整幅画布；
+
+区别二：
+svg输出的图形是矢量图形，后期可以修改参数来自由放大缩小，不会是真和锯齿。而canvas输出标量画布，
+就像一张图片一样，放大会失真或者锯齿
+	</pre>
+	<h1>w3c事件流 & ie事件流</h1>
+	<pre>
+w3c事件流:　(捕获)
+
+　　　　从根文档(html)开始遍历所有子节点，如果目标事件的父节点设置为捕获时触发，则执行该事件，直到目标被执行，然后再事件冒泡(设置为捕获时触发的事件不再被执行)。
+
+ie事件流:(冒泡)
+
+　　　　从目标事件被执行，然后再冒泡父节点的事件，直到根文档。
+	</pre>
+	<h1>trigger</h1>
+	<pre>
+1.trigger() 触发事件
+
+   这个方法是jQuery 1.3中新增的一个引起触发事件的函数。
+
+  这里的事件就如jQuery的帮助文档中的事件那一栏，如：click, mouseover, keydown 等有动作的js事件，而像show, hide这是效果不是事件。
+
+  也可以自己定义事件名称。
+
+2.为什么要用 trigger() ？
+
+  相信刚开始接触大家也都有这样的想法?
+
+  比如前台页面里有：&lt;p id="p1"&gt;请点击这里！&lt;/p&gt; 
+
+  你希望加载页面时就执行这个事件给这个这p绑定了click事件（将下面的代码写在$(function(){});里面）：
+
+ 	    $("#p1").click(function(){
+
+                alert("hello!");
+
+            });
+
+   如果用trigger()，你就要写成这样：
+
+            $("#p1").click(function(){
+
+                alert("hello!");
+
+            }).trigger(click);
+
+这样写不是更加麻烦了吗？可以这么说，但是用trigger()最大的好处就是它是可以传递参数进去的。例如：
+
+        //myEvent为自定义事件名
+
+        $("#p1").bind("myEvent",function(event,str1,str2) {
+
+               alert(str1 + ' ' + str2); 
+
+          });  
+
+         $("#p1").trigger("myEvent",["Hello","World"]); 
+
+也可以这样写：
+
+　　　 $("#p1").bind("myEvent",function(event,str1,str2) {
+
+               alert(str1 + ' ' + str2); 
+
+          }).trigger("myEvent",["Hello","World"]); 
+	</pre>
+	<h1>排序</h1>
+	<pre>
+		冒泡
+		var arr = [3,6,1,2,5];
+		var temp;
+		for(var i= 0;i<arr.length;i++){
+			for(var j=i+1;j<arr.length;j++){
+				if(arr[i] > arr[j]){
+					temp = arr[i];
+					arr[i] = arr[j];
+					arr[j] = temp;
+				}
+			}
+		}
+		console.log(arr);
+
+		快速
+		
+	</pre>
+	<h1>字符串的方法</h1>
+	<pre>
+stringObject.slice(start,end)
+一个新的字符串。包括字符串 stringObject 从 start 开始（包括 start）到 end 结束（不包括 end）为止的所有字符。
+
+String 对象的方法 slice()、substring() 和 substr() （不建议使用）都可返回字符串的指定部分。slice() 比 substring() 
+要灵活一些，因为它允许使用负数作为参数。slice() 与 substr() 有所不同，因为它用两个字符的位置来指定子串，
+而 substr() 则用字符位置和长度来指定子串。
+
+lastIndexOf() 方法可返回一个指定的字符串值最后出现的位置，在一个字符串中的指定位置从后向前搜索。
+语法
+stringObject.lastIndexOf(searchvalue,fromindex)
+	</pre>
+	<h1></h1>
+	<pre>
+function getQueryObject(url) { 
+    url = url == null ? window.location.href : url; 
+    var search = url.substring(url.lastIndexOf("?") + 1); 
+    var obj = {}; 
+    var reg = /([^?&=]+)=([^?&=]*)/g; 
+    search.replace(reg, function (rs, $1, $2) { 
+        var name = decodeURIComponent($1); 
+        var val = decodeURIComponent($2);                
+        val = String(val); 
+        obj[name] = val; 
+        return rs; 
+    }); 
+    return obj; 
+} 
+
+	</pre>
+	<h1>函数节流的原理</h1>
+	<pre>
+在前端开发中，有时会为页面绑定resize事件，或者为一个页面元素绑定拖拽事件（其核心就是绑定mousemove），
+这种事件有一个特点，就是用户不必特地捣乱，他在一个正常的操作中，都有可能在一个短的时间内触发非常多次事件绑定程序。
+而大家知道，DOM操作时很消耗性能的，这个时候，如果你为这些事件绑定一些操作DOM节点的操作的话，那就会引发大量的计算，
+在用户看来，页面可能就一时间没有响应，这个页面一下子变卡了变慢了。甚至在IE下，如果你绑定的resize事件进行较多DOM操作，
+其高频率可能直接就使得浏览器崩溃。
+
+函数节流的原理挺简单的，估计大家都想到了，那就是定时器。当我触发一个时间时，
+先setTimout让这个事件延迟一会再执行，如果在这个时间间隔内又触发了事件，那我们就clear掉原来的定时器，
+再setTimeout一个新的定时器延迟一会执行，就这样。
+
+明白了原理，那就可以在代码里用上了，但每次都要手动去新建清除定时器毕竟麻烦，于是需要封装。
+在《JavaScript高级程序设计》一书有介绍函数节流，里面封装了这样一个函数节流函数：
+
+function throttle(method, context) {
+     clearTimeout(methor.tId);
+     method.tId = setTimeout(function(){
+         method.call(context);
+     }， 100);
+ }
+它把定时器ID存为函数的一个属性（= =个人的世界观不喜欢这种写法）。而调用的时候就直接写
+window.onresize = function(){
+    throttle(myFunc);
+}
+这样两次函数调用之间至少间隔100ms。
+	</pre>
+	<h1>服务器Push技术</h1>
+	<pre>
+一般的服务器Push技术包括：
+基于 AJAX 的长轮询（long-polling）方式，服务器Hold一段时间后再返回信息；
+HTTP Streaming，通过iframe和&gt;script&lt;标签完成数据的传输；
+TCP 长连接
+HTML5新引入的WebSocket，可以实现服务器主动发送数据至网页端，它和HTTP一样，是一个基于HTTP的应用层协议，跑的是TCP，所以本质上还是个长连接，双向通信，意味着服务器端和客户端可以同时发送并响应请求，而不再像HTTP的请求和响应
+	</pre>
+	<h1></h1>
+	<pre>
+		autocomplete属性为off时，不自动完成，不让浏览器自动记录之前的值
+	</pre>
+	<h1>重排重绘</h1>
+	<pre>
+		重绘和重排（repaints and reflows）
+每个页面至少在初始化的时候会有一次重排操作。任何对渲染树的修改都有可能会导致下面两种操作：
+1，重排
+就是渲染树的一部分必须要更新 并且节点的尺寸发生了变化。这就会触发重排操作。
+
+2，重绘
+部分节点需要更新，但是没有改变他的集合形状，比如改变了背景颜色，这就会触发重绘。
+
+
+什么情况下会触发重绘或重排
+
+下面任何操作都会触发重绘或者重排：
+
+增加或删除DOM节点
+设置 display: none;（重排并重绘） 或者 visibility: hidden（只有重排）
+移动页面中的元素
+增加或者修改样式
+用户 改变窗口大小，滚动页面等
+看一个例子：
+var bstyle = document.body.style; // cache
+ 
+bstyle.padding = "20px"; // reflow, repaint
+bstyle.border = "10px solid red"; // another reflow and a repaint
+ 
+bstyle.color = "blue"; // repaint only, no dimensions changed
+bstyle.backgroundColor = "#fad"; // repaint
+ 
+bstyle.fontSize = "2em"; // reflow, repaint
+ 
+// new DOM element - reflow, repaint
+document.body.appendChild(document.createTextNode('dude!'));
+
+有些重绘操作会比其他操作昂贵很多。比如你把一个body的子元素做了修改，不一定会导致大量的其他节点更新，但是你把一个元素移动到页面顶部去，可能就会导致全部其他节点进行重排操作，这个代价就非常昂贵。
+	</pre>
+	<h1>笔记</h1>
+	<pre>
+		a标签里的高度与里面的img标签的高度不同时，设置img为display:block;
+		position绝对布局后，可以通过同时设置top,bottom,left,right来设置改标签的大小
+	</pre>
+	<h1>box-sizing</h1>
+	<pre>
+		是设置在子标签上的
+		可以设置为content-box(默认值)，表示padding和border都不包含在width里
+		border-box表示padding和border都包含在width里(兼容到ie8)
+	</pre>
+	<h1>BACKFACE-VISIBILITY</h1>
+	<pre>
+		backface-visibility设置为hidden时，隐藏被旋转的 div 元素的背面;多用于3d旋转
+	</pre>
+	<h1>transform-origin</h1>
+	<pre>
+transform-origin 属性允许您改变被转换元素的位置。
+2D 转换元素能够改变元素 x 和 y 轴。3D 转换元素还能改变其 Z 轴。
+transform-origin: x-axis y-axis z-axis;
+值	描述
+
+x-axis	
+定义视图被置于 X 轴的何处。可能的值：
+left
+center
+right
+length
+%
+
+y-axis	
+定义视图被置于 Y 轴的何处。可能的值：
+top
+center
+bottom
+length
+%
+z-axis	
+定义视图被置于 Z 轴的何处。可能的值：
+length
+	</pre>
+	<h1>CSS3 :nth-of-type() 选择器</h1>
+	<pre>
+规定属于其父元素的第二个 p 元素的每个 p：
+p:nth-of-type(2)
+{
+background:#ff0000;
+}
+
+Odd 和 even 是可用于匹配下标是奇数或偶数的子元素的关键词（第一个子元素的下标是 1）。
+在这里，我们为奇数和偶数 p 元素指定两种不同的背景色：
+p:nth-of-type(odd)
+{
+background:#ff0000;
+}
+p:nth-of-type(even)
+{
+background:#0000ff;
+}
+
+使用公式 (an + b)。描述：表示周期的长度，n 是计数器（从 0 开始），b 是偏移值。
+在这里，我们指定了下标是 3 的倍数的所有 p 元素的背景色：
+p:nth-of-type(3n+0)
+{
+background:#ff0000;
+}	
+
+nth-child是不按类型地数
+
+规定属于其父元素的第二个子元素的每个 p 的背景色：
+p:nth-child(2)
+{
+background:#ff0000;
+}	
+	</pre>
+	<h1>css3的+和~</h1>
+	<pre>
+CSS3 兄弟选择符(E~F)
+说明：本文档兼容性测试基础环境为：windows系统；IE6-IE10, Firefox6.0, Chrome13.0, Safari5.1, Opera11.51
+语法：
+E~F{ sRules }
+说明：
+选择E元素后面的所有兄弟元素F。
+
+加号（+）为：相邻同胞选择器
+　　如果需要选择紧接在另一个元素后的元素，而且二者有相同的父元素，可以使用相邻兄弟选择器(Adjacent sibling selector)。
+　　例如，如果要增加紧接在 h1 元素后出现的段落的上边距，可以这样写：
+h1 + p {margin-top:50px;}
+　　这个选择器读作：“选择紧接在 h1 元素后出现的 p 元素（需要满足 h1 和 p 元素拥有共同的父元素）”
+	</pre>
+	<h1>js中的parent、top、self的含义</h1>
+	<pre>
+js中经常看到window.parent、window.top、window.self，那么这些代表什么意思呢？
+1、parent   parent常用在iframe和frame中的子页面访问父页面中的对象
+2、top   top一个页面可能会有很多层，top是指最顶层的框架
+3、self  self是指当前窗口 
+	</pre>
+	<h1>prop和attr的区别</h1>
+	<pre>
+		prop用于本身带有的属性
+		attr用户自定义的属性
+	</pre>
+	<h1>application/x-www-form-urlencoded</h1>
+	<pre>
+		form 中Enctype=multipart/form-data 的作用 
+		表单中enctype="multipart/form-data"的意思，是设置表单的MIME编码。
+		默认情况， 这个编码格式是application/x-www-form-urlencoded，不能用于文件上传；
+		只有使用了multipart/form-data,才能用于文件上传
+	</pre>
+	<h1>表单序列化</h1>
+	<pre>
+		$(selector).serialize()
+	</pre>
+	<h1>jsonp和json的区别</h1>
+	<pre>
+		json是通过xhr对象去作传输的。
+		jsonp实际上相当于一个外部的js文件。
+	</pre>
+	<h1>如何用JavaScript探测CSS动画是否已经完成</h1>
+	<pre>
+		transitionend
+
+		$("div").one("webkitTransitionEnd otransitionend transitionend",function(){
+alert("11");
+	
+	jquery 的 one方法
+	定义和用法
+	one() 方法为被选元素附加一个或多个事件处理程序，并规定当事件发生时运行的函数。
+	当使用 one() 方法时，每个元素只能运行一次事件处理器函数。
+	</pre>
+	<h1>gpu 3d动画加速(解决Chrome动画”卡顿”的办法)</h1>
+	<pre>
+		webkit-transform: translate3d(0,0,0);
+		-moz-transform: translate3d(0,0,0);
+		-ms-transform: translate3d(0,0,0);
+		-o-transform: translate3d(0,0,0);
+		transform: translate3d(0,0,0);
+
+		为动画DOM元素添加CSS3样式-webkit-transform:transition3d(0,0,0)或
+		-webkit-transform:translateZ(0);
+		，这两个属性都会开启GPU硬件加速模式，从而让浏览器在渲染动画时从CPU转向GPU，
+		其实说白了这是一个小伎俩，也可以算是一个Hack，-webkit-transform:transition3d
+		和-webkit-transform:translateZ其实是为了渲染3D样式，但我们设置值为0后，
+		并没有真正使用3D效果，但浏览器却因此开启了GPU硬件加速模式。
+
+		这种GPU硬件加速在当今PC机及移动设备上都已普及，在移动端的性能提升是相当显著地，
+		所以建议大家在做动画时可以尝试一下开启GPU硬件加速。
+
+		当然也可以这样开启所有浏览器的GPU硬件加速：
+
+		webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+		或
+
+		webkit-transform: translate3d(0,0,0);
+		-moz-transform: translate3d(0,0,0);
+		-ms-transform: translate3d(0,0,0);
+		-o-transform: translate3d(0,0,0);
+		transform: translate3d(0,0,0);
+　　使用-webkit-transform:transition3d(0,0,0)开启GPU硬件加速的chrome中渲染动画性能明显顺畅了许多
+	</pre>
+	<h1>哪些元素会生成BFC</h1>
+	<pre>
+		BFC 定义
+　　BFC(Block formatting context)直译为"块级格式化上下文"。它是一个独立的渲染区域，只有Block-level box参与， 它规定了内部的Block-level Box如何布局，并且与这个区域外部毫不相干。
+		二、哪些元素会生成BFC?
+		根元素
+		float属性不为none
+		position为absolute或fixed
+		display为inline-block, table-cell, table-caption, flex, inline-flex
+		overflow不为visible
+	</pre>
+	<h1>-webkit-tap-highlight-color</h1>
+	<pre>
+		-webkit-tap-highlight-color可以解决点击瞬间的选中效果
+	</pre>
+	<h1>滚动加载计算高度</h1>
+	<pre>
+	主看计算高度的方法,不要使用定时监听.使用滚动监听
+
+	//javascript
+	var imgs = document.getElementsByTagName('img');
+    // 获取视口高度与滚动条的偏移量
+    function lazyload(){
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+        var viewportSize = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        for(var i=0; i<imgs.length; i++) {
+            var x =scrollTop+viewportSize-imgs[i].offsetTop;
+            if(x>0){
+                imgs[i].src = imgs[i].getAttribute('loadpic');   
+            }
+        }
+    }
+    setInterval(lazyload,1000);
+
+    //jquery
+    $(document).ready(function(){
+    // 获取页面视口高度
+    var viewportHeight = $(window).height();
+    var lazyload = function() {
+        // 获取窗口滚动条距离
+        var scrollTop = $(window).scrollTop();
+        $('img').each(function(){
+        // 判断 视口高度+滚动条距离 与 图片元素距离文档原点的高度         
+        var x = scrollTop + viewportHeight - $(this).position().top;
+        // 如果大于0 即该元素能被浏览者看到，则将暂存于自定义属性loadpic的值赋值给真正的src            
+        if (x > 0)
+        {
+            $(this).attr('src',$(this).attr('loadpic')); 
+        }
+    })
+    }
+    // 创建定时器 “实时”计算每个元素的src是否应该被赋值
+	    setInterval(lazyload,100);
+	});
+
+	$(document).scrollTop() 获取垂直滚动的距离  即当前滚动的地方的窗口顶端到整个页面顶端的距离
+	</pre>
+	<h1>autocomplete</h1>
+	<pre>
+		autocomplete="off"可以设置浏览器不自动保存记录
+	</pre>
+	<h1>多行省略</h1>
+	<pre>
+.demo{
+    display: -webkit-box;    //1.设置display类型为-webkit-box
+    font-size: 14px;
+    line-height: 18px;
+    overflow: hidden;        //2.设置元素超出隐藏
+    text-overflow: ellipsis; //3.设置超出样式为省略号
+    -webkit-line-clamp: 2;   //4.设置2行应用省略
+    -webkit-box-orient: vertical;
+}
+	</pre>
+	<h1>chomre模拟,QQ内置浏览器，微信内置浏览器字体大小设置显示偏大的问题</h1>
+	<pre>
+		在外部设置max-height:9999px;
+	</pre>
+	<h1>移动端解决点击300ms延迟问题</h1>
+	<pre>
+	fastclick可以解决在手机上点击事件的300ms延迟
+	zepto的touch模块，tap事件也是为了解决在click的延迟问题
+	</pre>
+	<h1>will-change属性</h1>
+	<pre>
+		<a target="_blank" href="http://www.w3cplus.com/css3/introduction-css-will-change-property.html">http://www.w3cplus.com/css3/introduction-css-will-change-property.html</a>
+	</pre>
+	<h1>touch事件</h1>
+	<pre>
+		
+	/* 当用户手指放在移动设备在屏幕上滑动会触发的touch事件 */
+	// 以下支持webkit
+	touchstart——当手指触碰屏幕时候发生。不管当前有多少只手指
+	touchmove——当手指在屏幕上滑动时连续触发。通常我们再滑屏页面，会调用event的preventDefault()可以阻止默认情况的发生：阻止页面滚动
+	touchend——当手指离开屏幕时触发
+	touchcancel——系统停止跟踪触摸时候会触发。例如在触摸过程中突然页面alert()一个提示框，此时会触发该事件，这个事件比较少用
+
+	//TouchEvent说明：
+	touches：屏幕上所有手指的信息
+	targetTouches：手指在目标区域的手指信息
+	changedTouches：最近一次触发该事件的手指信息
+	touchend时，touches与targetTouches信息会被删除，changedTouches保存的最后一次的信息，最好用于计算手指信息
+
+	//参数信息(changedTouches[0])
+	clientX、clientY在显示区的坐标
+	target：当前元素
+
+	//事件响应顺序
+	ontouchstart  > ontouchmove  > ontouchend > onclick
+	</pre>
+	<h1>DOMContentLoaded事件</h1>
+	<pre>
+		这个事件是从HTML中的onLoad的延伸而来的，当一个页面完成加载时,初始化脚本的方法是使用load事件，
+		但这个类函数的缺点是仅在所有资源都完全加载后才被触发,这有时会导致比较严重的延迟,开发人员随后创建了
+		一种自定义事件,domready,它在DOM加载之后及资源加载之前被触发。
+		domready事件迅速被众多JavaScript库所采用,它开始在本地浏览器中以DOMContentLoaded的形式被使用;
+		此外,它目前已在HTML5中被标准化,下面的代码显示了DOMContentLoaded是如何在document对象中被触发的;
+		  document.addeventListener('DOMContentLoaded',function(){...},false);
+	</pre>
+	<h1>jquery ajax请求时，设置请求头信息 </h1>
+	<pre>
+		// attempt to make an XMLHttpRequest to indeed.com
+		// jQuery 1.6.1  and Chrome  dev 13.0.767
+		function makeRequest() {
+		    alert("inside makeRequest()");
+		    var settings = {
+		        type: "GET",
+		        url:URL+"?"+REQUEST,
+		        dataType:"xml",
+		        error: function(XHR,textStatus,errorThrown) {
+		            alert ("XHR="+XHR+"\ntextStatus="+textStatus+"\nerrorThrown=" + errorThrown);
+		        },
+		        success: function(data,textStatus) {
+		            $("body").append(data);
+		        },
+		        headers: {
+		            "Access-Control-Allow-Origin":"http://example.edu",
+		            "Access-Control-Allow-Headers":"X-Requested-With"
+		        }
+		    };
+		    $.ajax(settings);
+		}
+	</pre>
+	<h1>php设置header</h1>
+	<pre>
+ 		使用header方法
+		header("Access-Control-Allow-Origin: *"); # 跨域处理
+	</pre>
+	<h1>手机上输入内容的长度截断</h1>
+	<pre>
+具体的需求是这样的，输入框输入的字母和汉字都不能超过7个，而且需要实时判断，超过限制就截断，并弹出提示弹窗。
+
+原本计划的解决方案：
+
+通过Html5的oninput对输入框的内容进行监听，同时动态计算输入内容的长度
+(由于这里对汉字和字母的长度做了统一要求，都是7，所以这里只是简单计算了字符串的长度，
+并没有针对字符长度进行计算，PS: 一个中文字符长度为2，一个英文字母字符长度为1)。
+
+然后如果得到的长度超过7，我就对接下来输入的内容进行判断，如果是删除按钮，就允许输入；
+否则就禁止用户的输入，我是用的是 return false;
+
+但是理想很丰满啊，return false 这里并不起作用，并不能阻止用户的默认输入行为。
+至于这里为什么不起作用，还没有搞懂，各位要是知道，不妨提点一下啊！
+
+于是想到了字符串的截取，具体就一行代码
+this.value = this.value.substr(0, 7);
+
+手机上中文输入法的虚拟拼音也被 oninput 事件监听
+
+上面的问题搞定了英文字母的输入，但是手机上中文输入的时候，输入法会自动提供虚拟拼音。
+由于前面的字符截断，使得输入的中文 比如 "黄晓明"，虚拟拼音却是huang'xiao'ming 这里就超过了 7，结果就出现了提示弹窗，以及字符截断。。。。
+
+compositionstart
+
+当浏览器有非直接的文字输入时, compositionstart事件会以同步模式触发.
+
+compositionend
+
+当浏览器是直接的文字输入时, compositionend会以同步模式触发.
+
+
+$( '.input').on( 'input', function( e ) {
+  if ( $( this ).attr( 'inputstart' ) === 'no' ) {
+  return false;
+  }
+  $( '.sure' ).attr( 'lengthok', 'yes' );
+  if( getTextLength( this.value ) > 7 ) {
+    if ( e.keyCode !== 8 ) {
+      $( '.tiptext' ).html( '关键词长度不能超过7' );
+      $( '.tip' ).show();
+      setTimeout( function(){
+        $( '.tip' ).hide();
+      }, 1500 );
+      this.value = this.value.substr( 0, 7 );
+    }
+  }
+} ).on( 'compositionstart', function() { // 判断中文输入开始
+  $( this ).attr( 'inputstart', 'no' );
+} ).on( 'compositionend', function() {   // 判断中文输入结束，在此期间不触发 input 事件
+  $( this ).attr( 'inputstart', 'yes' );
+} );
+
+	</pre>
+	<h1>移动端禁止页面的全局滚动</h1>
+	<pre>
+	出现弹出层，我们是希望用户关注弹出层的内容和交互，所以用户不应该还能滚动遮罩层后面的内容。
+	看到了这个提问，<a href="https://segmentfault.com/q/1010000003075681">移动端禁止遮罩层以下屏幕滑动</a>，给我提供了一种新奇的思路，出现弹层的时候，设置页面最外层容器，也就是 body 内的第一层容器为 position fixed，取消弹层的时候，再修改为 position absolute 或者 relative 。这种方式果然一下就搞定了，由于外层都固定了，所以里面的容器自己滑动也不会影响整个页面的滑动了。	
+	</pre>
+	<h1>js数组迭代</h1>
+	<img src="https://pic2.zhimg.com/08235a5dafaaba6f9418704cba12fedd_b.jpeg" alt="">
+	<h1>一些链接</h1>
+	<pre id="p1">
+<a href="http://developer.51cto.com/art/201602/506079.htm">http://developer.51cto.com/art/201602/506079.htm</a>
+<a href="http://www.zhihu.com/question/21658448">http://www.zhihu.com/question/21658448</a>
+	</pre>
+	<h1>html中#include file的用法</h1>
+	<pre>
+有两个文件a.htm和b.htm，在同一目录下a.htm内容如下
+&lt;!-- #include file="b.htm" --&gt;
+
+b.htm内容如下
+今天：雨 31 ℃～26 ℃ 明天：雷阵雨 33 ℃～27 ℃  
+
+直接在浏览器中打开a，没有任何显示，后来知道，include是SSI（Server Side Include），
+在html中不支持include，之后把a.htm改成a.aspx，并且在将该页面发布在iis上，
+然后a.aspx就可以看到内容了。在html中想达到这样的效果，可以使用iframe标签，直接在网上找了个例子如下： 
+&lt;iframe   frameborder=0   border=0   width=300   height=300   src="b.htm" mce_src="b.htm"&gt;&lt;/iframe&gt;   
+	</pre>
+	<h1>img标签实现get请求</h1>
+	<pre>
+	var img = new Image(1,1);
+	img.src = 'http://devcrm.cogobuy.com:8005/qrCode/download';		
+	</pre>
+	<h1>自定义绑定事件与执行</h1>
+	<pre>
+	以下代码是在某对象下加入的属性，专门针对该对象绑定与执行事件
+	//绑定
+	on:function(type,handler){
+		if(typeof this.handlers[type] == 'undefined'){
+			this.handlers[type] = [];
+		}
+		this.handlers[type].push(handler);
+	}
+	//执行
+	fire:function(type,data){
+		if(this.handlers[type] instanceof Array){
+			var handlers = this.handlers[type];
+			for(var i=0,len=handlers.length;i<len;i++){
+				handlers[i](data);
+			}
+		}
+	}
+	</pre>
+	<h1>连缀语法</h1>
+	<pre>
+		就是通过return this;来实现
+	</pre>
+	<h1>原型链</h1>
+	<pre>
+		var fn = function(){};
+		fn === fn.prototype.constructor  //true
+	</pre>
+</body>
+</html>
